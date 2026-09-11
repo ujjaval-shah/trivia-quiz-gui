@@ -20,7 +20,7 @@ class QuizGUI(tk.Tk):
 
         self.grid_columnconfigure(0, weight=1)
 
-        self.title_label = ttk.Label(self, text="Trivia Quiz", font=("Helvetica", 25))
+        self.title_label = ttk.Label(self, text="Trivia Quiz", font=("Helvetica", 25, "bold"))
         self.title_label.grid(row=0, column=0, sticky="ew", padx=15, pady=(25, 10))
 
         separator = ttk.Separator(self, orient="horizontal")
@@ -109,7 +109,7 @@ class QuizGUI(tk.Tk):
     def on_submit(self):
         score, result_text = self.generate_result()
         print(f">> Score: {score}/10")
-        result_page = ResultPage(self.container, self, score, result_text)
+        result_page = ResultPage(self.container, self, score, len(self.questions), result_text)
         result_page.grid(row=0, column=0, sticky="nsew")
         result_page.tkraise()
 
@@ -159,7 +159,7 @@ class QuestionPage(ttk.Frame):
         question_no_label = ttk.Label(
             self,
             text=f"Question Number: {self.question_no}",
-            font=("Helvetica", 20)
+            font=("Helvetica", 20, "bold")
         )
         question_no_label.grid(
             row=0, column=0,
@@ -237,7 +237,7 @@ class QuestionPage(ttk.Frame):
 
 
 class ResultPage(ttk.Frame):
-    def __init__(self, parent, controller, score, generated_result):
+    def __init__(self, parent, controller, score, total, generated_result):
         super().__init__(parent)
         self.controller = controller
 
@@ -246,8 +246,8 @@ class ResultPage(ttk.Frame):
 
         self.score_label = ttk.Label(
             self,
-            text=f"Your Score: {score}/10",
-            font=("Helvetica", 20)
+            text=f"Quiz Completed! Your Score: {score}/{total}",
+            font=("Helvetica", 20, "bold")
         )
         self.score_label.grid(
             row=0, column=0,
