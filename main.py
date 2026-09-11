@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 import requests
 import random
 import html
@@ -100,13 +100,22 @@ class QuizGUI(tk.Tk):
             correct_choice = self.questions[i]["options"].index(self.questions[i]["correct_answer"])
             user_choice = self.selected_options[i].get()
             score += correct_choice == user_choice
-            chosen_option = "" if user_choice == -1 else self.questions[i]["options"][user_choice]
-            result.append(
-                f'{i+1}. {self.questions[i]["question"]}\nCorrect Answer: {self.questions[i]["correct_answer"]}\nYour Response: {chosen_option}'
-            )
-        return score, "\n\n".join(result)
+            status = "✓ Correct" if correct_choice == user_choice else "✗ Incorrect"
+            chosen_option = self.questions[i]["options"][user_choice] if user_choice != -1 else "(No response)"
+            result.append((
+                f'Q{i+1}. {self.questions[i]["question"]}\n'
+                f'Status: {status}\n'
+                f'Correct Answer: {self.questions[i]["correct_answer"]}\n'
+                f'Your Response: {chosen_option}\n'
+            ))
+        return score, "\n".join(result)
 
     def on_submit(self):
+        if any(option.get() == -1 for option in self.selected_options):
+            confirm = messagebox.askyesno("Unanswered Questions", "You have unanswered questions. Are you sure you want to submit?")
+            if not confirm:
+                return
+
         score, result_text = self.generate_result()
         print(f">> Score: {score}/10")
         result_page = ResultPage(self.container, self, score, len(self.questions), result_text)
