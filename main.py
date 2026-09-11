@@ -122,14 +122,16 @@ class HomePage(ttk.Frame):
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
-        sentences = [
-            "Quiz GUI App made with Tkinter. Press start button to start the quiz.",
-            "Make sure you have active internet connection.",
-            "The questions will take a few seconds to load."
-        ]
+        info_text = (
+            "Welcome to Trivia Quiz!\n\n"
+            "• You will be given 10 multiple-choice questions.\n"
+            "• Make sure you have active internet connection.\n"
+            "• The questions will take a few seconds to load.\n"
+            "• You can navigate between questions before submitting.\n"
+        )
 
         label = ttk.Label(
-            self, text="\n".join(sentences),
+            self, text=info_text,
             font=("Helvetica", 15)
         )
         label.grid(row=1, column=0, sticky="w", padx=15, pady=15)
