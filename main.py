@@ -113,14 +113,15 @@ class QuizGUI(tk.Tk):
         result_page.grid(row=0, column=0, sticky="nsew")
         result_page.tkraise()
 
+    def reset_to_home(self):
+        self.home_page.reset_start_btn()
+        self.home_page.tkraise()
+
 
 class HomePage(ttk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller
-
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(0, weight=1)
 
         info_text = (
             "Welcome to Trivia Quiz!\n\n"
@@ -138,15 +139,18 @@ class HomePage(ttk.Frame):
 
         self.start_btn = ttk.Button(
             self,
-            text="Start",
+            text="Start Quiz",
             command=self.on_start
         )
         self.start_btn.grid(row=2, column=0, sticky="w", padx=15, pady=15)
     
     def on_start(self):
         print(">> Start Button Clicked")
-        self.start_btn.config(state=tk.DISABLED)
+        self.start_btn.config(state=tk.DISABLED, text="Loading Questions")
         Thread(target=self.controller.on_start).start()
+
+    def reset_start_btn(self):
+        self.start_btn.config(state=tk.NORMAL, text="Start Quiz")
 
 
 class QuestionPage(ttk.Frame):
@@ -257,12 +261,22 @@ class ResultPage(ttk.Frame):
             padx=15, pady=(15, 10)
         )
 
-        result_text_area = tk.Text(self, wrap=tk.WORD, font=("Helvetica", 14))
+        result_text_area = tk.Text(self, wrap=tk.WORD, font=("Helvetica", 14), height=20)
         result_text_area.insert(tk.END, generated_result)
         result_text_area.config(state=tk.DISABLED)
         result_text_area.grid(
             row=1, column=0,
             sticky="nsew",
+            padx=15, pady=15
+        )
+
+        restart_btn = ttk.Button(
+            self, text="Take Another Quiz",
+            command=controller.reset_to_home
+        )
+        restart_btn.grid(
+            row=2, column=0,
+            sticky="w",
             padx=15, pady=15
         )
 
