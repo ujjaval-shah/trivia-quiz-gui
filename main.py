@@ -32,6 +32,12 @@ class QuizGUI(tk.Tk):
         self.container.grid_rowconfigure(0, weight=1)
         self.container.grid_columnconfigure(0, weight=1)
 
+        # State Variables
+        self.questions = []
+        self.selected_options = []
+        self.question_frames = []
+        self.q_state = 0
+
         self.home_page = HomePage(self.container, self)
         self.home_page.grid(row=0, column=0, sticky="nsew")
 
