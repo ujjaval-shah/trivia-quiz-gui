@@ -1,5 +1,6 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+# from tkinter import ttk, messagebox
+import ttkbootstrap as tb
 import requests
 import random
 import html
@@ -7,26 +8,28 @@ import time
 from threading import Thread
 
 
-class QuizGUI(tk.Tk):
+WINDOW_SIZE = (1100, 700)
+WINDOW_TITLE = "Trivia Quiz"
+
+
+class QuizGUI(tb.App):
     def __init__(self):
-        super().__init__()
-        self.title("Trivia Quiz")
-        self.geometry("1100x700")
+        super().__init__(title=WINDOW_TITLE, size=WINDOW_SIZE)
         self.resizable(False, False)
 
-        self.style = ttk.Style(self)
-        self.style.configure("TButton", font=("Helvetica", 15))
-        self.style.configure("TRadiobutton", font=("Helvetica", 15))
+        self.tb_style = tb.Style()
+        self.tb_style.configure("TButton", font=("Helvetica", 15))
+        self.tb_style.configure("TRadiobutton", font=("Helvetica", 15))
 
         self.grid_columnconfigure(0, weight=1)
 
-        self.title_label = ttk.Label(self, text="Trivia Quiz", font=("Helvetica", 25, "bold"))
+        self.title_label = tb.Label(self, text="Trivia Quiz", font=("Helvetica", 25, "bold"))
         self.title_label.grid(row=0, column=0, sticky="ew", padx=15, pady=(25, 10))
 
-        separator = ttk.Separator(self, orient="horizontal")
+        separator = tb.Separator(self, orient="horizontal")
         separator.grid(row=1, column=0, sticky="ew", padx=15, pady=5)
 
-        self.container = ttk.Frame(self)
+        self.container = tb.Frame(self)
         self.container.grid(row=2, column=0, sticky="nsew")
 
         self.container.grid_rowconfigure(0, weight=1)
@@ -118,7 +121,7 @@ class QuizGUI(tk.Tk):
 
     def on_submit(self):
         if any(option.get() == -1 for option in self.selected_options):
-            confirm = messagebox.askyesno("Unanswered Questions", "You have unanswered questions. Are you sure you want to submit?")
+            confirm = tb.Messagebox.yesno(title="Unanswered Questions", message="You have unanswered questions. Are you sure you want to submit?")
             if not confirm:
                 return
 
@@ -133,7 +136,7 @@ class QuizGUI(tk.Tk):
         self.home_page.tkraise()
 
 
-class HomePage(ttk.Frame):
+class HomePage(tb.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller
@@ -146,13 +149,13 @@ class HomePage(ttk.Frame):
             "• You can navigate between questions before submitting.\n"
         )
 
-        label = ttk.Label(
+        label = tb.Label(
             self, text=info_text,
             font=("Helvetica", 15)
         )
         label.grid(row=1, column=0, sticky="w", padx=15, pady=15)
 
-        self.start_btn = ttk.Button(
+        self.start_btn = tb.Button(
             self,
             text="Start Quiz",
             command=self.on_start
@@ -168,7 +171,7 @@ class HomePage(ttk.Frame):
         self.start_btn.config(state=tk.NORMAL, text="Start Quiz")
 
 
-class QuestionPage(ttk.Frame):
+class QuestionPage(tb.Frame):
     def __init__(self, parent, controller, question_no, question_data, selected_option):
         super().__init__(parent)
         self.controller = controller
@@ -177,7 +180,7 @@ class QuestionPage(ttk.Frame):
 
         self.grid_columnconfigure(1, weight=1)
 
-        question_no_label = ttk.Label(
+        question_no_label = tb.Label(
             self,
             text=f"Question Number: {self.question_no}",
             font=("Helvetica", 20, "bold")
@@ -189,7 +192,7 @@ class QuestionPage(ttk.Frame):
             padx=15, pady=(15, 10)
         )
 
-        question_text_label = ttk.Label(
+        question_text_label = tb.Label(
             self,
             text=question_data["question"],
             wraplength=1050,
@@ -203,7 +206,7 @@ class QuestionPage(ttk.Frame):
             padx=15, pady=10
         )
 
-        options_frame = ttk.Frame(self)
+        options_frame = tb.Frame(self)
         options_frame.grid_columnconfigure(0, weight=1)
 
         options_frame.grid(
@@ -214,7 +217,7 @@ class QuestionPage(ttk.Frame):
         )
 
         for i, option in enumerate(question_data["options"]):
-            rbtn = ttk.Radiobutton(
+            rbtn = tb.Radiobutton(
                 options_frame,
                 text=option,
                 variable=selected_option,
@@ -223,7 +226,7 @@ class QuestionPage(ttk.Frame):
             )
             rbtn.grid(row=i, column=0, sticky="w")
 
-        prev_btn = ttk.Button(
+        prev_btn = tb.Button(
             self, text="Previous",
             command=controller.on_prev
         )
@@ -233,7 +236,7 @@ class QuestionPage(ttk.Frame):
             padx=15, pady=15
         )
 
-        next_btn = ttk.Button(
+        next_btn = tb.Button(
             self, text="Next",
             command=controller.on_next
         )
@@ -243,7 +246,7 @@ class QuestionPage(ttk.Frame):
             padx=15, pady=15
         )
 
-        submit_btn = ttk.Button(
+        submit_btn = tb.Button(
             self, text="Submit",
             command=controller.on_submit
         )
@@ -257,7 +260,7 @@ class QuestionPage(ttk.Frame):
         print(f">> Question Number {self.question_no} Option {self.selected_option.get() + 1} selected")
 
 
-class ResultPage(ttk.Frame):
+class ResultPage(tb.Frame):
     def __init__(self, parent, controller, score, total, generated_result):
         super().__init__(parent)
         self.controller = controller
@@ -265,7 +268,7 @@ class ResultPage(ttk.Frame):
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=1)
 
-        self.score_label = ttk.Label(
+        self.score_label = tb.Label(
             self,
             text=f"Quiz Completed! Your Score: {score}/{total}",
             font=("Helvetica", 20, "bold")
@@ -276,7 +279,7 @@ class ResultPage(ttk.Frame):
             padx=15, pady=(15, 10)
         )
 
-        result_text_area = tk.Text(self, wrap=tk.WORD, font=("Helvetica", 14), height=20)
+        result_text_area = tb.ScrolledText(self, wrap=tk.WORD, font=("Helvetica", 14), height=15)
         result_text_area.insert(tk.END, generated_result)
         result_text_area.config(state=tk.DISABLED)
         result_text_area.grid(
@@ -285,7 +288,7 @@ class ResultPage(ttk.Frame):
             padx=15, pady=15
         )
 
-        restart_btn = ttk.Button(
+        restart_btn = tb.Button(
             self, text="Take Another Quiz",
             command=controller.reset_to_home
         )
