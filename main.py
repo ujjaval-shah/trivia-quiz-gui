@@ -40,6 +40,7 @@ class QuizGUI(tb.App):
         self.selected_options = []
         self.question_frames = []
         self.q_state = 0
+        self.result_page = None
 
         self.home_page = HomePage(self.container, self)
         self.home_page.grid(row=0, column=0, sticky="nsew")
@@ -127,13 +128,18 @@ class QuizGUI(tb.App):
 
         score, result_text = self.generate_result()
         print(f">> Score: {score}/10")
-        result_page = ResultPage(self.container, self, score, len(self.questions), result_text)
-        result_page.grid(row=0, column=0, sticky="nsew")
-        result_page.tkraise()
+        self.result_page = ResultPage(self.container, self, score, len(self.questions), result_text)
+        self.result_page.grid(row=0, column=0, sticky="nsew")
+        self.result_page.tkraise()
+        # Destroy all question_frames
+        for q_frame in self.question_frames:
+            q_frame.destroy()
 
     def reset_to_home(self):
         self.home_page.reset_start_btn()
         self.home_page.tkraise()
+        # Destroy result_page
+        self.result_page.destroy()
 
 
 class HomePage(tb.Frame):
